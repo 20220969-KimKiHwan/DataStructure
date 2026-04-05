@@ -1,7 +1,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "stack.h"
 
 int precedence(char op) {
@@ -19,17 +18,19 @@ int evaluatePostfix(char* postfix) {
 
         if (isdigit(ch)) {
             push(&s, ch - '0');
-        }
-        else {
+        } else {
             int b = pop(&s);
             int a = pop(&s);
-            int result;
+            int result = 0;
 
             switch (ch) {
-            case '+': result = a + b; break;
-            case '-': result = a - b; break;
-            case '*': result = a * b; break;
-            case '/': result = a / b; break;
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '*': result = a * b; break;
+                case '/': result = a / b; break;
+                default:
+                    printf("잘못된 연산자: %c\n", ch);
+                    exit(1);
             }
 
             push(&s, result);
@@ -47,7 +48,7 @@ int infixToPostfix(char* infix, char* postfix) {
     for (int i = 0; infix[i] != '\0'; i++) {
         char ch = infix[i];
 
-        if (isalnum(ch)) {
+        if (isdigit(ch)) {
             postfix[j++] = ch;
         }
         else if (ch == '(') {
@@ -67,9 +68,11 @@ int infixToPostfix(char* infix, char* postfix) {
         }
     }
 
-    while (!isEmpty(&s))    postfix[j++] = pop(&s);
-    postfix[j] = '\0';
+    while (!isEmpty(&s)) {
+        postfix[j++] = pop(&s);
+    }
 
+    postfix[j] = '\0';
     return evaluatePostfix(postfix);
 }
 
